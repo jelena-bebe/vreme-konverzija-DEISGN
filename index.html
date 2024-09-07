@@ -1,0 +1,129 @@
+<html>
+<head>
+    <title>Vreme Konverzija - Lokalno i IST</title>
+    <style>
+        /* Stil za dugme */
+        button {
+            background-color: green; /* Zelena boja pozadine */
+            color: white; /* Bela boja teksta */
+            font-size: 20pt; /* Veličina fonta */
+            font-family: 'Nexa Bold', sans-serif; /* Nexa Bold font (pod uslovom da je dostupan) */
+            text-transform: uppercase; /* Velika slova */
+            padding: 10px 20px; /* Unutrašnji razmak */
+            border: none; /* Bez okvira */
+            border-radius: 5px; /* Zaobljeni uglovi */
+            cursor: pointer; /* Pointer kursor pri prelasku miša */
+            margin-bottom: 10px; /* Razmak ispod dugmeta */
+        }
+
+        /* Stil za dugme kada pređeš mišem */
+        button:hover {
+            background-color: darkgreen; /* Tamnija zelena kada pređeš mišem */
+        }
+
+        /* Stil za tekst i polja */
+        h2, h3 {
+            font-family: 'Nexa Bold', sans-serif; /* Nexa Bold font */
+            color: darkgreen; /* Tamnozelena boja naslova */
+        }
+
+        label {
+            font-family: Arial, sans-serif; /* Arial font za tekst */
+            font-size: 16pt; /* Veličina fonta */
+        }
+
+        input {
+            font-size: 16pt; /* Veličina fonta u polju za unos */
+            padding: 5px; /* Unutrašnji razmak */
+            margin-right: 10px; /* Razmak desno od polja za unos */
+        }
+    </style>
+</head>
+<body>
+
+<h2>Prikaz i konverzija vremena</h2>
+
+<!-- Dugme za prikaz trenutnog lokalnog vremena -->
+<button type="button" onclick="displayLocalTime()">Prikaži lokalno vreme</button>
+<p id="localTime"></p>
+
+<!-- Dugme za prikaz trenutnog vremena u Indiji (IST) -->
+<button type="button" onclick="displayIndianTime()">Prikaži vreme u Indiji (IST)</button>
+<p id="indianTime"></p>
+
+<!-- Unos lokalnog vremena i prikaz ekvivalentnog vremena u Indiji -->
+<h3>Konvertuj lokalno vreme u vreme u Indiji (IST)</h3>
+<label for="localInput">Unesi lokalno vreme (HH:MM):</label>
+<input type="time" id="localInput">
+<button type="button" onclick="convertToIndianTime()">Konvertuj u IST</button>
+<p id="convertedToIST"></p>
+
+<!-- Unos vremena u Indiji i prikaz ekvivalentnog lokalnog vremena -->
+<h3>Konvertuj vreme u Indiji (IST) u lokalno vreme</h3>
+<label for="indianInput">Unesi vreme u Indiji (HH:MM):</label>
+<input type="time" id="indianInput">
+<button type="button" onclick="convertToLocalTime()">Konvertuj u lokalno vreme</button>
+<p id="convertedToLocal"></p>
+
+<script>
+function displayLocalTime() {
+    // Prikaži trenutno lokalno vreme
+    let currentDate = new Date();
+    document.getElementById("localTime").innerHTML = "Lokalno vreme: " + currentDate.toLocaleString();
+}
+
+function displayIndianTime() {
+    // Prikaži trenutno vreme u Indiji (IST)
+    let currentDate = new Date();
+    let options = { timeZone: 'Asia/Kolkata', timeZoneName: 'short' };
+    let indianDate = currentDate.toLocaleString('sr-RS', options);
+    document.getElementById("indianTime").innerHTML = "Vreme u Indiji (IST): " + indianDate;
+}
+
+function convertToIndianTime() {
+    // Preuzmi unos lokalnog vremena
+    let inputTime = document.getElementById("localInput").value;
+    if (inputTime) {
+        let currentDate = new Date();
+        let [hours, minutes] = inputTime.split(":");
+
+        // Postavi lokalno vreme na osnovu unosa
+        currentDate.setHours(hours);
+        currentDate.setMinutes(minutes);
+
+        // Konvertuj lokalno vreme u IST
+        let options = { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: false };
+        let indianTime = new Intl.DateTimeFormat('sr-RS', options).format(currentDate);
+
+        // Prikaži konvertovano vreme
+        document.getElementById("convertedToIST").innerHTML = "Vreme u Indiji za uneto lokalno vreme: " + indianTime;
+    } else {
+        document.getElementById("convertedToIST").innerHTML = "Molim te unesi validno lokalno vreme.";
+    }
+}
+
+function convertToLocalTime() {
+    // Preuzmi unos vremena u Indiji
+    let inputTime = document.getElementById("indianInput").value;
+    if (inputTime) {
+        let currentDate = new Date();
+        let [hours, minutes] = inputTime.split(":");
+
+        // Postavi IST vreme na osnovu unosa
+        currentDate.setUTCHours(hours - 5);  // IST je UTC+5:30
+        currentDate.setUTCMinutes(minutes - 30);
+
+        // Konvertuj IST vreme u lokalno vreme
+        let options = { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, hour: '2-digit', minute: '2-digit', hour12: false };
+        let localTime = new Intl.DateTimeFormat('sr-RS', options).format(currentDate);
+
+        // Prikaži konvertovano lokalno vreme
+        document.getElementById("convertedToLocal").innerHTML = "Lokalno vreme za uneto vreme u Indiji: " + localTime;
+    } else {
+        document.getElementById("convertedToLocal").innerHTML = "Molim te unesi validno vreme u Indiji.";
+    }
+}
+</script>
+
+</body>
+</html>
