@@ -4,48 +4,48 @@
     <style>
         /* Stil za dugme */
         button {
-            background-color: lightblue; /* Svetlo plava boja pozadine */
-            color: white; /* Bela boja teksta */
-            font-size: 20pt; /* Veličina fonta */
-            font-family: 'Montserrat ExtraBold', sans-serif; /* Montserrat ExtraBold font (pod uslovom da je dostupan) */
-            text-transform: uppercase; /* Velika slova */
-            padding: 10px 20px; /* Unutrašnji razmak */
-            border: none; /* Bez okvira */
-            border-radius: 15px; /* Zaobljeni uglovi */
-            cursor: pointer; /* Pointer kursor pri prelasku miša */
-            margin-bottom: 10px; /* Razmak ispod dugmeta */
+            background-color: lightblue;
+            color: white;
+            font-size: 20pt;
+            font-family: 'Montserrat ExtraBold', sans-serif;
+            text-transform: uppercase;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-bottom: 10px;
         }
 
         /* Stil za dugme kada pređeš mišem */
         button:hover {
-            background-color: blue; /* Tamnija plava kada pređeš mišem */
+            background-color: blue;
         }
 
         /* Stil za tekst i polja */
         h2, h3 {
-            font-family: 'Montserrat Regular', sans-serif; /* Montserrat Regular font */
-            color: blue; /* Tamnoplava boja naslova */
-            text-transform: uppercase; /* Velika slova */
+            font-family: 'Montserrat Regular', sans-serif;
+            color: blue;
+            text-transform: uppercase;
         }
 
         label {
-            font-family: 'Montserrat Light', sans-serif; /* Montserrat Light font za tekst */
-            font-size: 16pt; /* Veličina fonta */
-            text-transform: uppercase; /* Velika slova */
-            color: blue; /* Plava boja teksta */
+            font-family: 'Montserrat Light', sans-serif;
+            font-size: 16pt;
+            text-transform: uppercase;
+            color: blue;
         }
 
         input {
-            font-size: 16pt; /* Veličina fonta u polju za unos */
-            padding: 10px; /* Unutrašnji razmak */
-            margin-right: 10px; /* Razmak desno od polja za unos */
+            font-size: 16pt;
+            padding: 10px;
+            margin-right: 10px;
         }
 
         /* Stil za lokalno i indijsko vreme */
-        #localTime, #indianTime {
-            color: red; /* Crvena boja za tekst vremena */
-            font-size: 18pt; /* Veličina fonta */
-            text-transform: uppercase; /* Velika slova */
+        #localTime, #indianTime, #convertedToIST, #convertedToLocal {
+            color: red;
+            font-size: 18pt;
+            text-transform: uppercase;
         }
     </style>
 </head>
@@ -80,60 +80,53 @@ function formatDate(date) {
     let day = String(date.getDate()).padStart(2, '0');
     let month = String(date.getMonth() + 1).padStart(2, '0');
     let year = date.getFullYear();
-    let hours = date.getHours() % 12 || 12; // Konvertuje 24-satni format u 12-satni
+    let hours = date.getHours() % 12 || 12;
     let minutes = String(date.getMinutes()).padStart(2, '0');
     let seconds = String(date.getSeconds()).padStart(2, '0');
-    let ampm = date.getHours() >= 12 ? 'PM' : 'AM'; // Dodaje AM ili PM
+    let ampm = date.getHours() >= 12 ? 'PM' : 'AM';
 
     return `${day}/${month}/${year}, ${hours}:${minutes}:${seconds}${ampm}`;
 }
 
 function displayLocalTime() {
-    // Prikaži trenutno lokalno vreme
     let currentDate = new Date();
     document.getElementById("localTime").innerHTML = "LOKALNO VREME " + formatDate(currentDate);
 }
 
 function displayIndianTime() {
-    // Prikaži trenutno vreme u Indiji (IST)
     let currentDate = new Date();
-    let indianDate = new Date(currentDate.getTime() + (3 * 60 + 30) * 60000); // Dodaj 3 sata i 30 minuta
+    let indianDate = new Date(currentDate.getTime() + (3 * 60 + 30) * 60000); 
     document.getElementById("indianTime").innerHTML = "VREME U INDIJI (IST) " + formatDate(indianDate) + " (GMT + 3:30)";
 }
 
 function convertToIndianTime() {
-    // Preuzmi unos lokalnog vremena
     let inputTime = document.getElementById("localInput").value;
     if (inputTime) {
         let currentDate = new Date();
         let [hours, minutes] = inputTime.split(":");
 
-        // Postavi lokalno vreme na osnovu unosa
         currentDate.setHours(hours);
         currentDate.setMinutes(minutes);
 
-        // Konvertuj lokalno vreme u IST
-        let indianDate = new Date(currentDate.getTime() + (3 * 60 + 30) * 60000); // Dodaj 3 sata i 30 minuta
-        document.getElementById("convertedToIST").innerHTML = "Vreme u Indiji za uneto lokalno vreme: " + formatDate(indianDate);
+        let indianDate = new Date(currentDate.getTime() + (3 * 60 + 30) * 60000);
+        document.getElementById("convertedToIST").innerHTML = "VREME U INDIJI ZA UNETO LOKALNO VREME: " + formatDate(indianDate);
     } else {
-        document.getElementById("convertedToIST").innerHTML = "Molim te unesi validno lokalno vreme.";
+        document.getElementById("convertedToIST").innerHTML = "MOLIM TE UNESI VALIDNO LOKALNO VREME.";
     }
 }
 
 function convertToLocalTime() {
-    // Preuzmi unos vremena u Indiji
     let inputTime = document.getElementById("indianInput").value;
     if (inputTime) {
         let currentDate = new Date();
         let [hours, minutes] = inputTime.split(":");
 
-        // Postavi IST vreme na osnovu unosa
         let indianDate = new Date(currentDate.setHours(hours, minutes));
-        let localDate = new Date(indianDate.getTime() - (3 * 60 + 30) * 60000); // Oduzmi 3 sata i 30 minuta
+        let localDate = new Date(indianDate.getTime() - (3 * 60 + 30) * 60000);
 
-        document.getElementById("convertedToLocal").innerHTML = "Lokalno vreme za uneto vreme u Indiji: " + formatDate(localDate);
+        document.getElementById("convertedToLocal").innerHTML = "LOKALNO VREME ZA UNETO VREME U INDIJI: " + formatDate(localDate);
     } else {
-        document.getElementById("convertedToLocal").innerHTML = "Molim te unesi validno vreme u Indiji.";
+        document.getElementById("convertedToLocal").innerHTML = "MOLIM TE UNESI VALIDNO VREME U INDIJI.";
     }
 }
 </script>
